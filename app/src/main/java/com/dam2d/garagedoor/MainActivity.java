@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
-    private FirebaseUser mFirebaseUser;
+    protected static FirebaseUser mFirebaseUser;
     private GoogleApiClient mGoogleApiClient;
 
     private static final int RC_SIGN_IN = 9001;
@@ -83,9 +83,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 */
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
-
-            //Aqui habia un finish()
-            return;
         } else {
             mUsername = mFirebaseUser.getDisplayName();
             if (mFirebaseUser.getPhotoUrl() != null) {
@@ -152,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
+                        mFirebaseAuth = FirebaseAuth.getInstance();
+                        mFirebaseUser = mFirebaseAuth.getCurrentUser();
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
