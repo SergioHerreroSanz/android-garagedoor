@@ -2,14 +2,9 @@ package com.dam2d.garagedoor;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,20 +12,20 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.firebase.auth.FirebaseUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -39,16 +34,19 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import static com.dam2d.garagedoor.MainActivity.mFirebaseUser;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ActionsFragment extends Fragment {
 
-    public ActionsFragment() {
+    private static final String TAG = "qqq";
+
+    ActionsFragment(FirebaseUser mFirebaseUser) {
+        this.FirebaseUser = mFirebaseUser;
     }
 
+    private final FirebaseUser FirebaseUser;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,16 +65,16 @@ public class ActionsFragment extends Fragment {
                     String url = "https://192.168.1.3/open";//Solo durante el desarrollo
                     String url2 = "https://2.152.242.16/open";//Solo durante el desarrollo
 
-                    Log.d("qqq", "Llego");
+                    Log.d(TAG, "Llego");
 
-                    HashMap<String, String> params = new HashMap<String, String>();
-                    params.put("token", mFirebaseUser.getUid());
-                    Log.d("token", mFirebaseUser.getUid());
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("token", FirebaseUser.getUid());
+                    Log.d(TAG, FirebaseUser.getUid());
 
                     JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, new JSONObject(params), new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            Log.d("qqq", "recibida respuesta volley");
+                            Log.d(TAG, "recibida respuesta volley");
                             parsearJSON(response);
                         }
                     }, new Response.ErrorListener() {
@@ -94,18 +92,18 @@ public class ActionsFragment extends Fragment {
         return view;
     }
 
-    public boolean isNetworkAvailable() {
+    private boolean isNetworkAvailable() {
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo redActiva = cm.getActiveNetworkInfo();
         return redActiva != null && redActiva.isAvailable() && redActiva.isConnected();
     }
 
     private void parsearJSON(JSONObject devuelto) {
-        Log.d("qqq", "parseando");
+        Log.d(TAG, "parseando");
         try {
             String mensaje = devuelto.getString("message");
-            Log.d("qqq", mensaje);
-            Log.d("qqq", devuelto.toString());
+            Log.d(TAG, mensaje);
+            Log.d(TAG, devuelto.toString());
             Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -113,7 +111,7 @@ public class ActionsFragment extends Fragment {
     }
 
     @SuppressLint("TrulyRandom")
-    public static void handleSSLHandshake() {
+    private static void handleSSLHandshake() {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
