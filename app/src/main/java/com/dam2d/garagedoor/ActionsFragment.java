@@ -63,27 +63,31 @@ public class ActionsFragment extends Fragment {
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "https://192.168.1.3/open";//Solo durante el desarrollo
+                if (isNetworkAvailable()) {
+                    String url = "https://192.168.1.3/open";//Solo durante el desarrollo
+                    String url2 = "https://2.152.242.16/open";//Solo durante el desarrollo
 
-                Log.d("qqq", "Llego");
+                    Log.d("qqq", "Llego");
 
-                HashMap<String, String> params = new HashMap<String, String>();
-                params.put("token", mFirebaseUser.getUid());
-                Log.d("token", mFirebaseUser.getUid());
+                    HashMap<String, String> params = new HashMap<String, String>();
+                    params.put("token", mFirebaseUser.getUid());
+                    Log.d("token", mFirebaseUser.getUid());
 
-                JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(params), new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        parsearJSON(response);
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
-                });
-                MySingleton.getInstance(getContext()).addToRequestQueue(request);
+                    JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url2, new JSONObject(params), new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Log.d("qqq", "recibida respuesta volley");
+                            parsearJSON(response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            error.printStackTrace();
+                        }
+                    });
+                    MySingleton.getInstance(getContext()).addToRequestQueue(request);
+                }
             }
         });
 
@@ -101,6 +105,8 @@ public class ActionsFragment extends Fragment {
         try {
             String mensaje = devuelto.getString("message");
             Log.d("qqq", mensaje);
+            Log.d("qqq", devuelto.toString());
+            Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }

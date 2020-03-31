@@ -12,8 +12,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,17 +21,18 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    protected FragmentManager fragmentManager;
+    protected static FragmentManager fragmentManager;
     protected SharedPreferences prefe;
 
     //User data
@@ -44,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAuth mFirebaseAuth;
     protected static FirebaseUser mFirebaseUser;
     private GoogleApiClient mGoogleApiClient;
+    static Intent signInIntent;
 
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "qqq";
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         prefe = getPreferences(MODE_PRIVATE);
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new ActionsFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new SingInFragment()).commit();
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+        signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
 
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -76,14 +77,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         //Check if user is logged in
         if (mFirebaseUser == null) {
-            // Not signed in, launch the Sign In activity
-/*            startActivity(new Intent(this, SignInActivity.class));
-            SingInFragment singInFragment = new SingInFragment();
-            fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, singInFragment).commit();
-*/
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            startActivityForResult(signInIntent, RC_SIGN_IN);
+            // Not signed in, launch the Sign In activity startActivity(new Intent(this, SignInActivity.class));
+            singIn();
         } else {
+            fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new ActionsFragment()).commit();
             mUsername = mFirebaseUser.getDisplayName();
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
@@ -106,7 +103,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            Log.d("qqq", "logout");
+            signOut();
             return true;
         }
 
@@ -133,9 +132,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign-In failed
-                Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-                startActivityForResult(signInIntent, RC_SIGN_IN);
+                // Google Sign-In failed, retry
                 Log.e(TAG, "Google Sign-In failed.");
             }
         }
@@ -157,16 +154,27 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Log.d(TAG, '"' + task.getException().getMessage() + '"');
-                            if (task.getException().getMessage().equals("8: The connection to Google Play services was lost")) {
-                                Log.d(TAG, "GPS lost");
-                            }
                             Toast.makeText(getApplicationContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new ActionsFragment()).commit();
                         }
-//                        } else {
-//                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-//                            finish();
-//                        }
                     }
                 });
+    }
+
+    private void singIn() {
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    public void signOut() {
+        if (mGoogleApiClient.isConnected()) {
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+            mGoogleApiClient.connect();
+            mFirebaseAuth.signOut();
+            mFirebaseUser = null;
+            fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new SingInFragment()).commit();
+            singIn();
+        }
     }
 }
