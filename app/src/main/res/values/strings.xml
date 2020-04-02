@@ -4,4 +4,6 @@
 
     <string name="actions_button_abrir">Abrir puerta</string>
     <string name="singIn_button_singIn">Iniciar sesión</string>
+    <string name="actions_textView_bienvenida">Hola</string>
+    <string name="actions_imageView_descripcion">Foto de perfil</string>
 </resources>
