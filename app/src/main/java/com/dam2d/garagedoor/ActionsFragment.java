@@ -115,11 +115,31 @@ public class ActionsFragment extends Fragment {
 
     private void parsearJSON(JSONObject devuelto) {
         Log.d(TAG, "parseando");
+
         try {
             String mensaje = devuelto.getString("message");
+
             Log.d(TAG, mensaje);
-            Log.d(TAG, devuelto.toString());
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
+
+            switch (mensaje) {
+                case "Success":
+                    mensaje = getString(R.string.message_success);
+                    break;
+                case "Not registered":
+                    mensaje = getString(R.string.message_notRegistered);
+                    break;
+                case "Not authorised":
+                    mensaje = getString(R.string.message_notAuthorised);
+                    break;
+                case "Error":
+                    mensaje = getString(R.string.message_error);
+                    break;
+                default:
+                    mensaje = getString(R.string.message_default);
+                    break;
+            }
+
+            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }

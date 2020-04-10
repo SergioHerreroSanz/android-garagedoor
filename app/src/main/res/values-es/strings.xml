@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">garagedoor</string>
+    <string name="action_logout">Cerrar sesión</string>
+    <string name="actions_button_abrir">Abrir puerta</string>
+    <string name="singIn_button_singIn">Iniciar sesión</string>
+    <string name="actions_textView_bienvenida">Hola,</string>
+    <string name="actions_imageView_descripcion">Foto de perfil</string>
+    <string name="message_success">Abriendo la puerta</string>
+    <string name="message_notAuthorised">No tienes autorización para abrir la puerta</string>
+    <string name="message_notRegistered">Se te ha registrado pero no tienes permiso para abrir la puerta</string>
+    <string name="message_error">Error en el servidor</string>
+    <string name="message_default">No se pudo conectar al servidor</string>
+</resources>

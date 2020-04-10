@@ -2,8 +2,14 @@
     <string name="app_name">garagedoor</string>
     <string name="action_logout">Logout</string>
 
-    <string name="actions_button_abrir">Abrir puerta</string>
-    <string name="singIn_button_singIn">Iniciar sesión</string>
-    <string name="actions_textView_bienvenida">Hola</string>
-    <string name="actions_imageView_descripcion">Foto de perfil</string>
+    <string name="actions_button_abrir">Open door</string>
+    <string name="singIn_button_singIn">Log in</string>
+    <string name="actions_textView_bienvenida">Hello,</string>
+    <string name="actions_imageView_descripcion">Profile picture</string>
+
+    <string name="message_success">Opening the door</string>
+    <string name="message_notAuthorised">You don\'t have permission to open th door</string>
+    <string name="message_notRegistered">You have been registered but you don\'t have permission to open the door</string>
+    <string name="message_error">Server error</string>
+    <string name="message_default">Unable to connect to the server</string>
 </resources>
