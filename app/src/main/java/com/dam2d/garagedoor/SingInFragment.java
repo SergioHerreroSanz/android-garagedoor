@@ -75,7 +75,7 @@ public class SingInFragment extends Fragment {
         //Check if user is logged in
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity startActivity(new Intent(this, SignInActivity.class));
-            singIn();
+            //singIn();
         } else {
             fragmentManager.beginTransaction().replace(R.id.nav_host_fragment, new ActionsFragment(mFirebaseUser)).commit();
         }
@@ -84,7 +84,7 @@ public class SingInFragment extends Fragment {
         singIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                singIn();
+                signIn();
             }
         });
         return view;
@@ -132,12 +132,12 @@ public class SingInFragment extends Fragment {
                 });
     }
 
-    private void singIn() {
+    public void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
-    static void signOut() {
+    public static void signOut() {
         if (mGoogleApiClient.isConnected()) {
             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
             mGoogleApiClient.disconnect();

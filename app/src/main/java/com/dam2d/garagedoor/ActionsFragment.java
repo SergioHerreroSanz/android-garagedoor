@@ -52,7 +52,7 @@ public class ActionsFragment extends Fragment {
 
     private static final String TAG = "qqq";
 
-    ActionsFragment(FirebaseUser mFirebaseUser) {
+    public ActionsFragment(FirebaseUser mFirebaseUser) {
         this.firebaseUser = mFirebaseUser;
     }
 
@@ -77,7 +77,7 @@ public class ActionsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (isNetworkAvailable()) {
-                    //String url = "https://192.168.1.3/open";//Solo durante el desarrollo
+                    //  String url = "https://192.168.1.3/open";//Solo durante el desarrollo
                     String url = "https://2.152.242.16/open";//Solo durante el desarrollo
 
                     Log.d(TAG, "Llego");
@@ -95,7 +95,7 @@ public class ActionsFragment extends Fragment {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getContext(), "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                            showMessage(getString(R.string.message_default));
                             error.printStackTrace();
                         }
                     });
@@ -139,14 +139,18 @@ public class ActionsFragment extends Fragment {
                     break;
             }
 
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
+            showMessage(mensaje);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    private void showMessage(String mensaje){
+        Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
+    }
+
     @SuppressLint("TrulyRandom")
-    private static void handleSSLHandshake() {
+        private static void handleSSLHandshake() {
         try {
             TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
                 public X509Certificate[] getAcceptedIssuers() {
