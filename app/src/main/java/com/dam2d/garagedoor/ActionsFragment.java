@@ -78,7 +78,7 @@ public class ActionsFragment extends Fragment {
             public void onClick(View v) {
                 if (isNetworkAvailable()) {
                     //  String url = "https://192.168.1.3/open";//Solo durante el desarrollo
-                    String url = "https://2.152.242.16/open";//Solo durante el desarrollo
+                    String url = "https://2.152.187.215/open";//Solo durante el desarrollo
 
                     Log.d(TAG, "Llego");
 
